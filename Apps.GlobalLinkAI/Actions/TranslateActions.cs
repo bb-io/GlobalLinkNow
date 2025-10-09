@@ -15,7 +15,7 @@ using RestSharp;
 
 namespace Apps.GlobalLinkAI.Actions;
 
-[ActionList]
+[ActionList("Translate")]
 public class TranslateActions : AppInvocable
 {
     private readonly IFileManagementClient _fileManagementClient;

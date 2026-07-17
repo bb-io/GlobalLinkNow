@@ -1,10 +1,11 @@
 using Apps.GlobalLinkAI.Api;
 using Apps.GlobalLinkAI.Invocables;
 using Apps.GlobalLinkAI.Models.Entities;
-using Apps.GlobalLinkAI.Models.Request;
 using Apps.GlobalLinkAI.Models.Request.Translation;
-using Apps.GlobalLinkAI.Models.Response;
 using Apps.GlobalLinkAI.Models.Response.Translation;
+using Apps.GlobalLinkAI.Services.Translation;
+using Apps.GlobalLinkAI.Services.Translation.Models;
+using Blackbird.Applications.SDK.Blueprints;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common.Invocation;
@@ -16,17 +17,10 @@ using RestSharp;
 namespace Apps.GlobalLinkAI.Actions;
 
 [ActionList("Translate")]
-public class TranslateActions : AppInvocable
+public class TranslateActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
+    : AppInvocable(invocationContext)
 {
-    private readonly IFileManagementClient _fileManagementClient;
-
-    public TranslateActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient) : base(
-        invocationContext)
-    {
-        _fileManagementClient = fileManagementClient;
-    }
-
-    [Action("Translate", Description = "Translate text")]
+    [Action("Translate text", Description = "Translate text")]
     public async Task<TextTranslationEntity> Translate([ActionParameter] TranslateTextRequest input,
         [ActionParameter] [Display("Text")] string text)
     {
@@ -48,41 +42,26 @@ public class TranslateActions : AppInvocable
         };
     }
 
-    [Action("Translate document", Description = "Translate a specific document")]
-    public async Task<FileResponse> TranslateDocument([ActionParameter] TranslateDocumentRequest input,
-        [ActionParameter] FileRequest file)
+    [BlueprintActionDefinition(BlueprintAction.TranslateFile)]
+    [Action("Translate", Description = "Translate a specific document")]
+    public async Task<TranslateResponse> TranslateDocument([ActionParameter] TranslateDocumentRequest input)
     {
-        input.From ??= "auto";
-        var endpoint = "/uploadapigateway/upload/documentTranslate".WithQuery(input);
+        await using var fileStream = await fileManagementClient.DownloadAsync(input.File);
 
-        var fileStream = await _fileManagementClient.DownloadAsync(file.File);
-        var request = new AppRequest(endpoint, Method.Post, Creds)
-            .AddFile("filename", () => fileStream, file.File.Name);
+        var translateInput = new TranslationStrategyRequest(
+            fileStream, 
+            input.File.Name, 
+            input.File.ContentType,
+            input.SourceLanguage, 
+            input.TargetLanguage,
+            input.Ocr,
+            input.Domain,
+            input.EngineId);
+        
+        var strategy = FileTranslationStrategyFactory.Create(input.FileTranslationStrategy, invocationContext);
+        var result = await strategy.Translate(translateInput);
 
-        var response = await Client.ExecuteWithErrorHandling<TranslateDocumentResponse>(request);
-        var fileId = response.FileIds.First().FileId;
-
-        var translationStatus = string.Empty;
-        while (translationStatus != "Translated")
-        {
-            await Task.Delay(1000);
-
-            request = new AppRequest($"apigateway/storage/info/file/{fileId}", Method.Get, Creds);
-            var fileResponse = await Client.ExecuteWithErrorHandling<TranslateFileResponse>(request);
-
-            translationStatus = fileResponse.Status;
-
-            if (translationStatus == "Error")
-                throw new(fileResponse.ErrorCode);
-        }
-
-        request = new AppRequest($"apigateway/storage/{fileId}?fileType=translated_file", Method.Get, Creds);
-        var fileContentResponse = await Client.ExecuteWithErrorHandling(request);
-
-        return new()
-        {
-            File = await _fileManagementClient.UploadAsync(new MemoryStream(fileContentResponse.RawBytes),
-                file.File.ContentType, file.File.Name)
-        };
+        var outputFile = await fileManagementClient.UploadAsync(result.Stream, result.MediaType, result.FileName);
+        return new(outputFile);
     }
 }

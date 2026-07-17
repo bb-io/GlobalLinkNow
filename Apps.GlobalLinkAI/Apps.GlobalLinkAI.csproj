@@ -6,13 +6,14 @@
         <Nullable>enable</Nullable>
         <Product>GlobalLink Now</Product>
         <Description>AI-Powered Machine Translation</Description>
-        <Version>1.0.3</Version>
+        <Version>1.0.4</Version>
         <AssemblyName>Apps.GlobalLinkAI</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Blackbird.Applications.SDK.Blueprints" Version="1.0.0-rc.10308" />
+        <PackageReference Include="Blackbird.Applications.SDK.Blueprints" Version="1.0.2" />
         <PackageReference Include="Blackbird.Applications.Sdk.Utils" Version="1.0.25" />
+        <PackageReference Include="Blackbird.Filters" Version="1.2.11" />
     </ItemGroup>
 
     <ItemGroup>

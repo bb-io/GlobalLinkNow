@@ -1,3 +1,4 @@
+using Apps.GlobalLinkAI.Authenticators;
 using Apps.GlobalLinkAI.Constants;
 using Apps.GlobalLinkAI.Models.Response;
 using Blackbird.Applications.Sdk.Common.Authentication;
@@ -10,15 +11,12 @@ using RestSharp;
 
 namespace Apps.GlobalLinkAI.Api;
 
-public class AppClient : BlackBirdRestClient
+public class AppClient(AuthenticationCredentialsProvider[] creds) : BlackBirdRestClient(new()
 {
-    public AppClient(AuthenticationCredentialsProvider[] creds) : base(new()
-    {
-        BaseUrl = creds.Get(CredsNames.Host).Value.ToUri()
-    })
-    {
-    }
-
+    BaseUrl = creds.Get(CredsNames.Host).Value.ToUri(),
+    Authenticator = new ApiKeyAuthenticator(creds)
+})
+{
     protected override Exception ConfigureErrorException(RestResponse response)
     {
         var error = JsonConvert.DeserializeObject<ErrorResponse>(response.Content);

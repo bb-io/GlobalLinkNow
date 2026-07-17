@@ -1,4 +1,4 @@
-using Apps.GlobalLinkAI.Api;
+using Apps.GlobalLinkAI.Extensions;
 using Apps.GlobalLinkAI.Invocables;
 using Apps.GlobalLinkAI.Models.Entities;
 using Apps.GlobalLinkAI.Models.Request.Translation;
@@ -11,7 +11,6 @@ using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
 using Blackbird.Applications.Sdk.Utils.Extensions.Http;
-using Blackbird.Applications.Sdk.Utils.Extensions.String;
 using RestSharp;
 
 namespace Apps.GlobalLinkAI.Actions;
@@ -20,26 +19,21 @@ namespace Apps.GlobalLinkAI.Actions;
 public class TranslateActions(InvocationContext invocationContext, IFileManagementClient fileManagementClient)
     : AppInvocable(invocationContext)
 {
+    [BlueprintActionDefinition(BlueprintAction.TranslateText)]
     [Action("Translate text", Description = "Translate text")]
-    public async Task<TextTranslationEntity> Translate([ActionParameter] TranslateTextRequest input,
-        [ActionParameter] [Display("Text")] string text)
+    public async Task<TranslateTextResponse> Translate([ActionParameter] TranslateTextRequest input)
     {
-        input.From ??= "auto";
-        var endpoint = "/apigateway/texttranslator".WithQuery(input);
-
-        var request = new AppRequest(endpoint, Method.Post, Creds).WithJsonBody(new TextTranslationEntity[]
-        {
-            new()
-            {
-                Text = text
-            }
-        });
+        string sourceLanguage = string.IsNullOrEmpty(input.From) ? "auto" : input.From;
+        var request = new RestRequest("/apigateway/texttranslator", Method.Post)
+            .AddQueryParameter("to", input.TargetLanguage)
+            .AddNullableQueryParameter("from", sourceLanguage)
+            .AddNullableQueryParameter("textType", "text")
+            .AddNullableQueryParameter("domain", input.Domain)
+            .AddNullableQueryParameter("engineId", input.EngineId)
+            .WithJsonBody(new TextTranslationEntity[] { new() { Text = input.Text } });
+        
         var response = await Client.ExecuteWithErrorHandling<TextTranslationResponse>(request);
-
-        return new()
-        {
-            Text = string.Join(" ", response.Message.Select(x => x.Text))
-        };
+        return new(string.Join(" ", response.Message.Select(x => x.Text)));
     }
 
     [BlueprintActionDefinition(BlueprintAction.TranslateFile)]

@@ -21,7 +21,7 @@ public class TranslateActions(InvocationContext invocationContext, IFileManageme
     : AppInvocable(invocationContext)
 {
     [BlueprintActionDefinition(BlueprintAction.TranslateText)]
-    [Action("Translate text", Description = "Translate text")]
+    [Action("Translate text", Description = "Translate the provided text.")]
     public async Task<TranslateTextResponse> Translate([ActionParameter] TranslateTextRequest input)
     {
         string sourceLanguage = string.IsNullOrEmpty(input.From) ? "auto" : input.From;
@@ -38,7 +38,7 @@ public class TranslateActions(InvocationContext invocationContext, IFileManageme
     }
 
     [BlueprintActionDefinition(BlueprintAction.TranslateFile)]
-    [Action("Translate", Description = "Translate a specific document")]
+    [Action("Translate", Description = "Translate file content retrieved from a CMS or file storage.")]
     public async Task<TranslateResponse> TranslateDocument([ActionParameter] TranslateDocumentRequest input)
     {
         await using var fileStream = await fileManagementClient.DownloadAsync(input.File);

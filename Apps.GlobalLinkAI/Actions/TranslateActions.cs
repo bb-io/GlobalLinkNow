@@ -24,7 +24,7 @@ public class TranslateActions(InvocationContext invocationContext, IFileManageme
     [Action("Translate text", Description = "Translate the provided text.")]
     public async Task<TranslateTextResponse> Translate([ActionParameter] TranslateTextRequest input)
     {
-        string sourceLanguage = string.IsNullOrEmpty(input.From) ? "auto" : input.From;
+        string sourceLanguage = string.IsNullOrEmpty(input.SourceLanguage) ? "auto" : input.SourceLanguage;
         var request = new RestRequest("/apigateway/texttranslator", Method.Post)
             .AddQueryParameter("to", input.TargetLanguage)
             .AddNullableQueryParameter("from", sourceLanguage)
@@ -59,6 +59,6 @@ public class TranslateActions(InvocationContext invocationContext, IFileManageme
 
         await using var outputStream = result.Stream;
         var outputFile = await fileManagementClient.UploadAsync(outputStream, result.MediaType, result.FileName);
-        return new(outputFile);
+        return new(outputFile, result.Errors);
     }
 }

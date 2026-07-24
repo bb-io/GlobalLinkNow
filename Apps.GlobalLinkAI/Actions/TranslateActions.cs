@@ -54,10 +54,11 @@ public class TranslateActions(InvocationContext invocationContext, IFileManageme
             input.Domain,
             input.EngineId);
         
-        var strategy = FileTranslationStrategyFactory.Create(input.FileTranslationStrategy, invocationContext);
+        var strategy = FileTranslationStrategyFactory.Create(input.FileTranslationStrategy, InvocationContext);
         var result = await strategy.Translate(translateInput);
 
-        var outputFile = await fileManagementClient.UploadAsync(result.Stream, result.MediaType, result.FileName);
+        await using var outputStream = result.Stream;
+        var outputFile = await fileManagementClient.UploadAsync(outputStream, result.MediaType, result.FileName);
         return new(outputFile);
     }
 }

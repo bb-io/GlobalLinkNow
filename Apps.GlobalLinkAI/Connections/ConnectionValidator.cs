@@ -5,7 +5,7 @@ using RestSharp;
 
 namespace Apps.GlobalLinkAI.Connections;
 
-public class ConnectionValidator: IConnectionValidator
+public class ConnectionValidator : IConnectionValidator
 {
     public async ValueTask<ConnectionValidationResponse> ValidateConnection(
         IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders,
@@ -13,7 +13,7 @@ public class ConnectionValidator: IConnectionValidator
     {
         var creds = authenticationCredentialsProviders.ToArray();
         
-        var request = new AppRequest("/apigateway/mtengine/organization/information/all", Method.Get, creds);
+        var request = new RestRequest("/apigateway/mtengine/organization/information/all");
         await new AppClient(creds).ExecuteWithErrorHandling(request);
         
         return new()

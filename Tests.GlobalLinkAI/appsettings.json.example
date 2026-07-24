@@ -1,0 +1,8 @@
+{
+    "ConnectionDefinition":
+    {
+        "host": "",
+        "api_key": ""
+    },
+    "TestFolder": "TestFiles"
+}

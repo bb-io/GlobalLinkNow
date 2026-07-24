@@ -6,8 +6,8 @@ Blackbird is the new automation backbone for the language technology industry. B
 
 <!-- begin docs -->
 
- GlobalLink NOW is an ad-hoc Neural Machine Translation solution that leverages AI technology to securely deliver high-quality content on demand.
- 
+GlobalLink NOW is an ad-hoc Neural Machine Translation solution that leverages AI technology to securely deliver high-quality content on demand.
+
 ## Before setting up
 
 Before you can connect you need to make sure that:
@@ -28,15 +28,8 @@ Before you can connect you need to make sure that:
 
 ## Actions
 
-- **Translate** Translate text
-- **Translate Document** Translate a file. 
-Input:
-    - File
-    - Target Language
-    - Source Language (optional)
-    - Domain (optional)
-    - Engine ID (optional)
-    - OCR (optional)
+- **Translate text** Translate the provided text.
+- **Translate** Translate file content retrieved from a CMS or file storage.
 
 ## Example
 

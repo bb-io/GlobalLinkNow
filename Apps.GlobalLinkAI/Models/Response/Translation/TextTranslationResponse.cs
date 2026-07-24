@@ -1,6 +1,9 @@
+using Newtonsoft.Json;
+
 namespace Apps.GlobalLinkAI.Models.Response.Translation;
 
 public class TextTranslationResponse
 {
-    public IEnumerable<TranslationMessageResponse> Message { get; set; }
+    [JsonProperty("message")]
+    public List<TranslationMessageResponse> Message { get; set; } = [];
 }

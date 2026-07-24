@@ -1,33 +1,24 @@
 using Apps.GlobalLinkAI.DataSourceHandlers;
-using Apps.GlobalLinkAI.DataSourceHandlers.StaticDataSourceHandlers;
+using Blackbird.Applications.SDK.Blueprints.Interfaces.Translate;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Dynamic;
-using Newtonsoft.Json;
 
 namespace Apps.GlobalLinkAI.Models.Request.Translation;
 
-public class TranslateTextRequest
+public class TranslateTextRequest : ITranslateTextInput
 {
-    [Display("Target language")]
-    [JsonProperty("to")]
-    [DataSource(typeof(LanguageDataSourceHandler))]
-    public string To { get; set; }
+    [Display("Text")] 
+    public string Text { get; set; } = string.Empty;
     
-    [Display("Source language")]
-    [JsonProperty("from")]
-    [DataSource(typeof(LanguageDataSourceHandler))]
-    public string? From { get; set; }
-
-    [Display("Text type")]
-    [JsonProperty("textType")]
-    [DataSource(typeof(TextTypeDataHandler))]
-    public string? TextType { get; set; }
+    [Display("Target language"), DataSource(typeof(LanguageDataSourceHandler))]
+    public string TargetLanguage { get; set; } = string.Empty;
     
-    [JsonProperty("domain")]
+    [Display("Source language"), DataSource(typeof(LanguageDataSourceHandler))]
+    public string? SourceLanguage { get; set; }
+    
+    [Display("Domain")]
     public string? Domain { get; set; }
     
-    [Display("Engine ID")]
-    [JsonProperty("engineId")]
-    [DataSource(typeof(EngineDataSourceHandler))]
+    [Display("Engine ID"), DataSource(typeof(EngineDataSourceHandler))]
     public string? EngineId { get; set; }
 }

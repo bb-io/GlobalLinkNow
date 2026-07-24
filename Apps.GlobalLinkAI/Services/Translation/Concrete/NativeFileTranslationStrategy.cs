@@ -27,9 +27,13 @@ public class NativeFileTranslationStrategy(InvocationContext context) : AppInvoc
         var response = await Client.ExecuteWithErrorHandling<TranslateDocumentResponse>(request);
         string fileId = response.FileIds.First().FileId;
 
+        int attempts = 0;
         string translationStatus = string.Empty;
         while (translationStatus != "Translated")
         {
+            if (++attempts > 300)
+                throw new PluginApplicationException("Timed out waiting for GlobalLink to finish translating the document");
+            
             await Task.Delay(1000);
 
             request = new RestRequest($"apigateway/storage/info/file/{fileId}");

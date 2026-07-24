@@ -1,6 +1,8 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apps.GlobalLinkAI", "Apps.GlobalLinkAI\Apps.GlobalLinkAI.csproj", "{EB25604E-8EBA-464E-BEDF-30EA95395AD3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.GlobalLinkAI", "Tests.GlobalLinkAI\Tests.GlobalLinkAI.csproj", "{4D2AE011-E8F3-4708-AE14-D963910EC247}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -11,5 +13,9 @@ Global
 		{EB25604E-8EBA-464E-BEDF-30EA95395AD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB25604E-8EBA-464E-BEDF-30EA95395AD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB25604E-8EBA-464E-BEDF-30EA95395AD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D2AE011-E8F3-4708-AE14-D963910EC247}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D2AE011-E8F3-4708-AE14-D963910EC247}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D2AE011-E8F3-4708-AE14-D963910EC247}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D2AE011-E8F3-4708-AE14-D963910EC247}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

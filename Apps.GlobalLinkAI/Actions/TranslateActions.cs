@@ -1,3 +1,4 @@
+using Apps.GlobalLinkAI.Constants;
 using Apps.GlobalLinkAI.Extensions;
 using Apps.GlobalLinkAI.Invocables;
 using Apps.GlobalLinkAI.Models.Entities;
@@ -46,6 +47,7 @@ public class TranslateActions(InvocationContext invocationContext, IFileManageme
             fileStream, 
             input.File.Name, 
             input.File.ContentType,
+            input.OutputFileHandling ?? ProcessFileFormat.InteroperableXliff,
             input.SourceLanguage, 
             input.TargetLanguage,
             input.Ocr,

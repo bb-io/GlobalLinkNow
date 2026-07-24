@@ -1,3 +1,4 @@
+using Apps.GlobalLinkAI.Constants;
 using Apps.GlobalLinkAI.Extensions;
 using Apps.GlobalLinkAI.Invocables;
 using Apps.GlobalLinkAI.Models.Entities;
@@ -45,7 +46,7 @@ public class BlackbirdFileTranslationStrategy(InvocationContext context) : AppIn
                 if (result is null || string.IsNullOrEmpty(result.Text))
                     continue;
 
-                var shouldTranslate = segment.State is null || segment.State == SegmentState.Initial;
+                bool shouldTranslate = segment.State is null or SegmentState.Initial;
                 if (!shouldTranslate)
                     continue;
                 
@@ -65,8 +66,16 @@ public class BlackbirdFileTranslationStrategy(InvocationContext context) : AppIn
         if (content.SourceLanguage is null && sourceLanguages.Count == 1)
             content.SourceLanguage = sourceLanguages.Single();
 
-        return new TranslatedFileResult(content.Serialize().ToStream(), MediaTypes.Xliff2, content.BilingualFileName, errors.ToArray());
+        if (translateInput.OutputFileHandling == ProcessFileFormat.InteroperableXliff)
+            return new(content.Serialize().ToStream(), MediaTypes.Xliff2, content.BilingualFileName, errors.ToArray());
         
+        var targetContentLoadResult = content.Target();
+        if (!targetContentLoadResult.Success)
+            throw new PluginMisconfigurationException(targetContentLoadResult.Error);
+            
+        var targetContent = targetContentLoadResult.Value;
+        return new(targetContent.ToStream(), targetContent.OriginalMediaType, targetContent.OriginalName, errors.ToArray());
+
         async Task<IEnumerable<TranslationMessageResponse?>> BatchTranslate(IEnumerable<(Unit Unit, Segment Segment)> batch)
         {
             batchCounter++;

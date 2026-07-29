@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <Product>GlobalLink Now</Product>
         <Description>AI-Powered Machine Translation</Description>
-        <Version>1.0.4</Version>
+        <Version>1.0.5</Version>
         <AssemblyName>Apps.GlobalLinkAI</AssemblyName>
     </PropertyGroup>
 

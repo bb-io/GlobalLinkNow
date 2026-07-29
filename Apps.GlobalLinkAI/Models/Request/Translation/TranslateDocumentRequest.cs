@@ -29,7 +29,7 @@ public class TranslateDocumentRequest : ITranslateFileInput
     [Display("Engine ID"), DataSource(typeof(EngineDataSourceHandler))]
     public string? EngineId { get; set; }
     
-    [Display("Output file handling"), DataSource(typeof(ProcessFileFormatHandler))]
+    [Display("Output file handling"), StaticDataSource(typeof(ProcessFileFormatHandler))]
     public string? OutputFileHandling { get; set; }
 
     [Display("File translation strategy"), StaticDataSource(typeof(TranslationStrategyDataSourceHandler))]
